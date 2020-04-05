@@ -1,34 +1,14 @@
 def find_item_by_name_in_collection(name, collection)
-  index = 0
-
-  collection.each do |grocery_item|
-    return grocery_item if grocery_item[:item] === name 
-    index += 1
-  end
-
-  nil
+  # Iterate through collection with find enumerable to match first :item == name
+  collection.find {|item_hash| item_hash[:item] == name}
 end
 
-
 def consolidate_cart(cart)
-  index = 0
-  new_cart = []
-  
-  cart.each do |grocery_item|
-    current_item = find_item_by_name_in_collection(grocery_item[:item], new_cart)
-    if current_item
-      new_cart_index = 0
-      new_cart.each do |new_cart_item|
-        if new_cart_item[:item] === current_item[:item]
-          new_cart_item[:count] += 1
-        end
-        new_cart_index += 1
-      end
-    else
-      grocery_item[:count] = 1
-      new_cart << grocery_item
-    end
-    index += 1
+  # Create a cart of only unique items and then start to remape it to add item count
+  cart.uniq.each do |uniq_item_hash|
+    # Using new unique items count the number of times in cart
+    item_count = cart.count {|cart_item_hash| cart_item_hash == uniq_item_hash}
+    # Via map merge the existing uniq_item_hash with a new count hash
+    uniq_item_hash.merge!({:count => item_count})
   end
-  new_cart
 end
